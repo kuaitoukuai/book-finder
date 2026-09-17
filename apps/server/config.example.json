@@ -1,0 +1,16 @@
+{
+  "_comment": "配置模板：复制为 config.json 后按需修改。本文件只放非敏感配置；密钥请通过环境变量设置，切勿写入 config.json。",
+  "base_url": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "wechat_appid": "",
+
+  "_env": {
+    "DEEPSEEK_API_KEY": "必填（识别接口）。DeepSeek 控制台申请的 API Key，例如 sk-xxxxxxxx。未设置时识别接口会直接报错。",
+    "BOOKFINDER_SECRET": "建议设置（令牌签名密钥）。任意长度 >= 32 的随机字符串，例如用 python -c \"import secrets;print(secrets.token_hex(32))\" 生成。不设置则每次启动生成临时密钥，重启后所有用户需重新登录。",
+    "WECHAT_APPID": "可选（微信小程序登录）。不设置则 /api/auth/wechat 返回 503。",
+    "WECHAT_SECRET": "可选（微信小程序登录）。不设置则 /api/auth/wechat 返回 503。",
+    "DEEPSEEK_BASE_URL": "可选，默认 https://api.deepseek.com",
+    "DEEPSEEK_MODEL": "可选，默认 deepseek-flash",
+    "BOOKFINDER_ENV": "可选，设为 prod 时关闭 /docs、/redoc、/openapi.json"
+  }
+}

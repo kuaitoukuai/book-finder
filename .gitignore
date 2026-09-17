@@ -1,0 +1,35 @@
+# 依赖
+node_modules/
+apps/server/.venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# 构建产物
+dist/
+test-results/
+
+# 敏感数据（密钥、数据库、令牌签名密钥）
+apps/server/data/
+apps/server/config.local.json
+.env
+
+# 运行产物（识别结果图片、日志）
+apps/server/results/
+apps/server/logs/
+apps/server/logs_backup_*/
+apps/server/live*_dump.txt
+apps/server/live*_lower.txt
+
+# 测试数据集（个人照片，不上传）
+tests/dataset/
+
+# 工具与 QA 临时产物
+.workbuddy/
+qa_logs/
+
+# 系统文件
+.DS_Store
+Thumbs.db

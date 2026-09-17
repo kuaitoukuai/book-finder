@@ -1,0 +1,77 @@
+.page {
+  padding: 20rpx 0 120rpx;
+}
+
+.empty {
+  text-align: center;
+  padding: 120rpx 40rpx;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+}
+
+.check {
+  width: 40rpx;
+  height: 40rpx;
+  border: 2rpx solid #ccc;
+  border-radius: 8rpx;
+  margin-right: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 26rpx;
+  flex-shrink: 0;
+}
+
+.check.checked {
+  background: #2f54eb;
+  border-color: #2f54eb;
+}
+
+.info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.name {
+  font-weight: 600;
+  margin-bottom: 8rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 28rpx 16rpx;
+}
+
+.delete-all-btn {
+  background: #fff;
+  color: #ff4d4f;
+  border: 1rpx solid #ff4d4f;
+  font-size: 24rpx;
+  margin: 0;
+}
+
+.delete-btn {
+  color: #ff4d4f;
+  font-size: 26rpx;
+  padding: 16rpx 8rpx 16rpx 24rpx;
+  flex-shrink: 0;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 20rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 8rpx rgba(0, 0, 0, 0.05);
+}

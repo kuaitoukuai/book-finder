@@ -1,0 +1,64 @@
+.page {
+  padding: 20rpx 0 40rpx;
+}
+
+.input {
+  width: auto;
+  min-height: 160rpx;
+  background: #f5f6fa;
+  border-radius: 12rpx;
+  padding: 20rpx 24rpx;
+  font-size: 30rpx;
+}
+
+.search-btn {
+  margin-top: 24rpx;
+}
+
+.result-card {
+  padding-top: 28rpx;
+}
+
+.query-line {
+  font-weight: 600;
+  font-size: 32rpx;
+  margin-bottom: 16rpx;
+}
+
+.best-box {
+  background: #f0f5ff;
+  border: 1rpx solid #d6e4ff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.badge {
+  display: inline-block;
+  background: #2f54eb;
+  color: #fff;
+  font-size: 20rpx;
+  border-radius: 8rpx;
+  padding: 4rpx 12rpx;
+  margin-bottom: 12rpx;
+}
+
+.best-title {
+  font-weight: 600;
+  margin-bottom: 8rpx;
+}
+
+.other-item {
+  padding: 16rpx 0;
+  border-top: 1rpx solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.other-title {
+  margin-bottom: 4rpx;
+}
+
+.no-match {
+  padding: 20rpx 0;
+}

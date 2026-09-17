@@ -1,0 +1,43 @@
+<view class="page">
+  <view class="card">
+    <textarea
+      class="input"
+      placeholder="每行输入一个书名，可一次搜索多本"
+      auto-height
+      maxlength="-1"
+      value="{{text}}"
+      bindinput="onInput"
+    />
+    <button class="btn-primary search-btn" loading="{{searching}}" disabled="{{searching}}" bindtap="onSearch">搜索</button>
+  </view>
+
+  <view class="card result-card" wx:for="{{results}}" wx:key="query">
+    <view class="query-line">「{{item.query}}」</view>
+
+    <block wx:if="{{item.best}}">
+      <view class="best-box" data-match="{{item.best}}" bindtap="onTapMatch">
+        <view class="badge">置信度最高</view>
+        <view class="best-title">{{item.best.title}}</view>
+        <view class="muted">
+          书架 {{item.best.shelf || '-'}} · 第 {{item.best.index}} 本 · {{item.best.record_name}} ·
+          置信度 {{item.best.confidencePct}}%
+        </view>
+      </view>
+
+      <view
+        wx:if="{{item.others.length > 0}}"
+        class="other-item"
+        wx:for="{{item.others}}"
+        wx:for-item="m"
+        wx:key="key"
+        data-match="{{m}}"
+        bindtap="onTapMatch"
+      >
+        <text class="other-title">{{m.title}}</text>
+        <text class="muted">书架 {{m.shelf || '-'}} · {{m.record_name}} · {{m.confidencePct}}%</text>
+      </view>
+    </block>
+
+    <view wx:else class="muted no-match">未找到匹配的书籍</view>
+  </view>
+</view>

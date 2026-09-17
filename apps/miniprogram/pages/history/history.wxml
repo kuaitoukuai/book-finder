@@ -1,0 +1,30 @@
+<view class="page">
+  <view class="header-bar" wx:if="{{list.length > 0}}">
+    <text class="muted">共 {{list.length}} 条记录</text>
+    <button
+      class="delete-all-btn"
+      size="mini"
+      disabled="{{list.length === 0 || deleting}}"
+      bindtap="onDeleteAll"
+    >删除全部</button>
+  </view>
+
+  <view wx:if="{{list.length === 0 && !loading}}" class="empty muted">
+    还没有识别记录，去「识别」页拍一张书架吧
+  </view>
+
+  <view class="card item" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="onTapItem">
+    <view class="check {{item.checked ? 'checked' : ''}}" catchtap="onToggleCheck" data-id="{{item.id}}">
+      <text wx:if="{{item.checked}}">✓</text>
+    </view>
+    <view class="info">
+      <view class="name">{{item.name}}</view>
+      <view class="muted">书架：{{item.shelf || '-'}} · {{item.count}} 本 · {{item.created_at}}</view>
+    </view>
+    <view class="delete-btn" catchtap="onDeleteItem" data-id="{{item.id}}">删除</view>
+  </view>
+
+  <view class="footer" wx:if="{{list.length > 0}}">
+    <button class="btn-primary" loading="{{exporting}}" disabled="{{exporting}}" bindtap="onExport">导出选中为 Excel</button>
+  </view>
+</view>

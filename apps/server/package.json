@@ -1,0 +1,8 @@
+{
+  "name": "@bookfinder/server",
+  "private": true,
+  "scripts": {
+    "dev": "uv run uvicorn main:app --reload --port 8000",
+    "test": "uv run pytest tests/ -q"
+  }
+}

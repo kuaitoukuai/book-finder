@@ -1,0 +1,142 @@
+.offscreen-canvas {
+  position: fixed;
+  left: -9999px;
+  top: -9999px;
+  width: 300px;
+  height: 300px;
+}
+
+.pick-wrap {
+  padding-top: 20rpx;
+}
+
+.tip-card .tip-title {
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+
+.action-btn {
+  margin: 16rpx 0;
+}
+
+.camera-card {
+  padding-bottom: 32rpx;
+}
+
+.camera {
+  width: 100%;
+  height: 640rpx;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+
+/* 裁剪 */
+.crop-wrap {
+  padding: 20rpx 0 40rpx;
+}
+
+.crop-tip {
+  text-align: center;
+  color: #d48806;
+  font-size: 26rpx;
+  margin-bottom: 20rpx;
+}
+
+.crop-stage {
+  position: relative;
+  margin: 0 auto;
+}
+
+.crop-image {
+  width: 100%;
+  display: block;
+}
+
+.crop-rect {
+  position: absolute;
+  border: 4rpx solid #2f54eb;
+  box-sizing: border-box;
+  /* 框外遮罩 */
+  box-shadow: 0 0 0 4000rpx rgba(0, 0, 0, 0.5);
+}
+
+.corner {
+  position: absolute;
+  width: 48rpx;
+  height: 48rpx;
+  background: #2f54eb;
+  border-radius: 50%;
+  border: 4rpx solid #fff;
+  box-sizing: border-box;
+}
+
+.corner-tl { left: -24rpx; top: -24rpx; }
+.corner-tr { right: -24rpx; top: -24rpx; }
+.corner-bl { left: -24rpx; bottom: -24rpx; }
+.corner-br { right: -24rpx; bottom: -24rpx; }
+
+.crop-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 32rpx 40rpx 0;
+}
+
+.mini-btn {
+  flex: 1;
+  margin: 0 12rpx;
+  font-size: 28rpx;
+  padding: 0 12rpx;
+}
+
+.mini-btn.confirm {
+  flex: 2;
+}
+
+/* 结果 */
+.result-wrap {
+  padding-top: 20rpx;
+}
+
+.shelf-line {
+  font-size: 32rpx;
+  margin-bottom: 8rpx;
+}
+
+.shelf-no {
+  color: #2f54eb;
+  font-weight: 600;
+}
+
+.book-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.book-item:last-child {
+  border-bottom: none;
+}
+
+.book-index {
+  width: 64rpx;
+  color: #999;
+}
+
+.book-title {
+  flex: 1;
+}
+
+.book-conf {
+  color: #2f54eb;
+  font-size: 24rpx;
+}
+
+.empty {
+  text-align: center;
+  padding: 40rpx 0;
+}
+
+.result-actions {
+  margin: 0 20rpx 40rpx;
+}

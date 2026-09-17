@@ -1,0 +1,11 @@
+{
+  "name": "book-finder-v2",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm -r --parallel run dev",
+    "dev:web": "pnpm --filter web run dev",
+    "dev:server": "pnpm --filter @bookfinder/server run dev",
+    "build": "pnpm --filter web run build",
+    "test": "pnpm --filter web run test && pnpm --filter @bookfinder/server run test"
+  }
+}

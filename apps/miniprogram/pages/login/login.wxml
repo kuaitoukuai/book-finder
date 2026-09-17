@@ -1,0 +1,29 @@
+<view class="login-wrap">
+  <view class="logo">架上寻书</view>
+  <view class="subtitle">拍一拍书架，找到你的书</view>
+
+  <view class="card">
+    <button class="wechat-btn" loading="{{loading}}" disabled="{{loading}}" bindtap="onWechatLogin">微信一键登录</button>
+
+    <view class="divider">
+      <view class="divider-line"></view>
+      <text class="divider-text">或使用账号密码</text>
+      <view class="divider-line"></view>
+    </view>
+
+    <view class="field">
+      <text class="label">账号</text>
+      <input class="input" placeholder="字母/数字/下划线/中文" value="{{username}}" bindinput="onUsernameInput" />
+    </view>
+    <view class="field">
+      <text class="label">密码</text>
+      <input class="input" password placeholder="至少 6 位" value="{{password}}" bindinput="onPasswordInput" />
+    </view>
+    <button class="btn-primary submit" loading="{{loading}}" disabled="{{loading}}" bindtap="onSubmit">
+      {{mode === 'login' ? '登录' : '注册并登录'}}
+    </button>
+    <view class="switch" bindtap="onSwitchMode">
+      {{mode === 'login' ? '没有账号？去注册' : '已有账号？去登录'}}
+    </view>
+  </view>
+</view>

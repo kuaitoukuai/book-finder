@@ -1,0 +1,35 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/history/history",
+    "pages/search/search",
+    "pages/me/me",
+    "pages/login/login",
+    "pages/historyDetail/historyDetail"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#2f54eb",
+    "navigationBarTitleText": "架上寻书",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#f5f6fa"
+  },
+  "tabBar": {
+    "color": "#8a8a8a",
+    "selectedColor": "#2f54eb",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "识别" },
+      { "pagePath": "pages/history/history", "text": "记录" },
+      { "pagePath": "pages/search/search", "text": "搜索" },
+      { "pagePath": "pages/me/me", "text": "我的" }
+    ]
+  },
+  "permission": {
+    "scope.camera": {
+      "desc": "用于拍摄书架照片进行书籍识别"
+    }
+  },
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

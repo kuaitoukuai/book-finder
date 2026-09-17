@@ -1,0 +1,83 @@
+<!-- 离屏裁剪画布，不参与布局 -->
+<canvas type="2d" id="cropCanvas" class="offscreen-canvas"></canvas>
+
+<!-- 第一步：取图 -->
+<view wx:if="{{step === 'pick'}}" class="pick-wrap">
+  <view class="card tip-card">
+    <view class="tip-title">拍摄提示</view>
+    <view class="muted">尽量正对书架、光线充足，一次只拍一层书架效果更好。选好图片后可以框选要识别的一层。</view>
+  </view>
+
+  <view class="card">
+    <button class="btn-primary action-btn" bindtap="onChooseImage">拍照 / 从相册选择</button>
+    <button class="btn-plain action-btn" bindtap="onToggleCamera">
+      {{cameraOn ? '收起内置相机' : '使用内置相机拍摄'}}
+    </button>
+  </view>
+
+  <view wx:if="{{cameraOn}}" class="card camera-card">
+    <camera class="camera" device-position="back" flash="off" binderror="onCameraError"></camera>
+    <button class="btn-primary action-btn" bindtap="onTakePhoto">拍摄</button>
+  </view>
+</view>
+
+<!-- 第二步：框选裁剪 -->
+<view wx:if="{{step === 'crop'}}" class="crop-wrap">
+  <view class="crop-tip">框选一层书架，并包含书架号标签</view>
+
+  <view
+    class="crop-stage"
+    style="width: {{stageW}}px; height: {{stageH}}px;"
+    bindtouchstart="onTouchStart"
+    catchtouchmove="onTouchMove"
+    bindtouchend="onTouchEnd"
+    bindtouchcancel="onTouchEnd"
+  >
+    <image src="{{imagePath}}" mode="widthFix" class="crop-image" bindload="onImgLoad" />
+
+    <view
+      wx:if="{{rect.w > 0}}"
+      class="crop-rect"
+      style="left: {{rect.x}}px; top: {{rect.y}}px; width: {{rect.w}}px; height: {{rect.h}}px;"
+      catchtouchstart="onBodyStart"
+    >
+      <view class="corner corner-tl" data-mode="tl" catchtouchstart="onHandleStart"></view>
+      <view class="corner corner-tr" data-mode="tr" catchtouchstart="onHandleStart"></view>
+      <view class="corner corner-bl" data-mode="bl" catchtouchstart="onHandleStart"></view>
+      <view class="corner corner-br" data-mode="br" catchtouchstart="onHandleStart"></view>
+    </view>
+  </view>
+
+  <view class="crop-actions">
+    <button class="btn-plain mini-btn" bindtap="onResetCrop">全图</button>
+    <button class="btn-plain mini-btn" bindtap="onCancelCrop">重选</button>
+    <button class="btn-primary mini-btn confirm" loading="{{recognizing}}" disabled="{{recognizing}}" bindtap="onConfirmCrop">确认识别</button>
+  </view>
+</view>
+
+<!-- 第三步：结果 -->
+<view wx:if="{{step === 'result' && record}}" class="result-wrap">
+  <view class="card">
+    <view class="shelf-line">整架号：<text class="shelf-no">{{record.shelf || '未识别'}}</text></view>
+    <view class="muted">共识别 {{record.books.length}} 本书</view>
+  </view>
+
+  <view class="card book-list">
+    <view
+      wx:for="{{record.books}}"
+      wx:key="index"
+      class="book-item"
+      data-book="{{item}}"
+      bindtap="onTapBook"
+    >
+      <text class="book-index">{{item.index}}.</text>
+      <text class="book-title">{{item.title}}</text>
+      <text class="book-conf">{{item.confidencePct}}%</text>
+    </view>
+    <view wx:if="{{record.books.length === 0}}" class="muted empty">未识别到书籍，请重新拍摄</view>
+  </view>
+
+  <view class="result-actions">
+    <button class="btn-primary action-btn" bindtap="onRestart">再拍一张</button>
+  </view>
+</view>

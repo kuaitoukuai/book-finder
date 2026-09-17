@@ -1,0 +1,6 @@
+{
+  "_comment": "敏感信息一律通过环境变量配置，不要写进本文件：DEEPSEEK_API_KEY（视觉接口密钥）、BOOKFINDER_SECRET（令牌签名密钥）、WECHAT_APPID / WECHAT_SECRET（小程序登录）。详见 config.example.json。",
+  "base_url": "https://api.deepseek.com",
+  "model": "deepseek-flash",
+  "wechat_appid": ""
+}

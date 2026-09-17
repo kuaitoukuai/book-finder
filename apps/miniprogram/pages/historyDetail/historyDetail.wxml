@@ -1,0 +1,24 @@
+<view class="page">
+  <view wx:if="{{record}}">
+    <view class="card">
+      <view class="name">{{record.name}}</view>
+      <view class="muted">整架号：{{record.shelf || '未识别'}} · {{record.books.length}} 本 · {{record.created_at}}</view>
+    </view>
+
+    <view class="card">
+      <image src="{{imageUrl}}" mode="widthFix" class="record-image" bindtap="onPreviewImage" binderror="onImgError" />
+      <view class="muted center">点击图片放大查看</view>
+    </view>
+
+    <view class="card">
+      <view class="book-item" wx:for="{{record.books}}" wx:key="index">
+        <text class="book-index">{{item.index}}.</text>
+        <text class="book-title">{{item.title}}</text>
+        <text class="book-conf">{{item.confidencePct}}%</text>
+      </view>
+      <view wx:if="{{record.books.length === 0}}" class="muted empty">该记录没有识别到书籍</view>
+    </view>
+  </view>
+
+  <view wx:elif="{{!loading}}" class="muted empty">记录不存在或已被删除</view>
+</view>
