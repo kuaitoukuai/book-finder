@@ -9,6 +9,8 @@ interface AuthState {
   username: string | null;
   login: (username: string, password: string) => Promise<void>;
   register: (username: string, password: string) => Promise<void>;
+  /** 扫码登录等已拿到 token 的场景：直接写入，与账密登录同一套存储 */
+  loginWithToken: (token: string, username: string) => void;
   logout: () => void;
 }
 
@@ -68,6 +70,12 @@ export const useAuth = create<AuthState>((set) => ({
     } catch (e) {
       throw extractError(e);
     }
+  },
+
+  loginWithToken: (token, username) => {
+    writeLS(TOKEN_KEY, token);
+    writeLS(USER_KEY, username);
+    set({ token, username });
   },
 
   logout: () => {

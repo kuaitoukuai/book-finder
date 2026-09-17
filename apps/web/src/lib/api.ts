@@ -232,6 +232,31 @@ export async function searchBooks(queries: string[]): Promise<QueryResult[]> {
   return (await api.post<{ results: QueryResult[] }>("/search", { queries })).data.results;
 }
 
+// ---- 微信扫码登录 ----
+
+export interface WechatQrResult {
+  ticket: string;
+  /** data URL（真实模式为 PNG，MOCK 模式为 SVG 占位图） */
+  qr_image: string;
+  expires_in: number;
+}
+
+export type WechatQrStatus =
+  | { status: "pending" | "expired" | "cancelled" }
+  | { status: "confirmed"; token: string; username: string };
+
+/** 生成扫码登录二维码（票据 5 分钟有效、一次性） */
+export async function fetchWechatQr(): Promise<WechatQrResult> {
+  return (await api.post<WechatQrResult>("/auth/wechat/qr")).data;
+}
+
+/** 轮询扫码状态；confirmed 时后端一次性签发 Bearer token（票随即作废） */
+export async function fetchWechatQrStatus(ticket: string): Promise<WechatQrStatus> {
+  return (await api.get<WechatQrStatus>("/auth/wechat/qr/status", {
+    params: { ticket },
+  })).data;
+}
+
 /** 列出可用的视觉模型供应商（供"重新识别"对话框勾选） */
 export async function fetchProviders(): Promise<ProviderInfo[]> {
   return (await api.get<{ providers: ProviderInfo[] }>("/providers")).data.providers;

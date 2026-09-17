@@ -4,6 +4,7 @@
 识别接口使用 SSE 逐块推送进度。
 V3 新增：用户注册登录、记录按用户隔离、识别前裁剪、多书搜索、日志落盘。
 """
+import base64
 import io
 import json
 import logging
@@ -27,6 +28,7 @@ import requests
 from PIL import Image, ImageOps
 
 from core import auth
+from core import scan_login
 from core.fuse import fuse_book_lists
 from core.merge import merge_fragments
 from core.parse import norm_title, parse_books
@@ -137,6 +139,7 @@ WECHAT_APPID = os.environ.get("WECHAT_APPID") or CONFIG.get("wechat_appid", "")
 WECHAT_SECRET = os.environ.get("WECHAT_SECRET") or ""
 
 auth.init_db()
+scan_login.init_db()
 
 MAX_EDGE = 6000
 MAX_UPLOAD_BYTES = 30 * 1024 * 1024   # 单次上传体积上限（含 multipart 开销）
@@ -653,6 +656,104 @@ def api_auth_wechat(request: Request, payload: dict = Body(...)):
     username = auth.find_user_by_openid(openid) \
         or auth.create_wechat_user(openid)
     return {"token": auth.make_token(username, SECRET), "username": username}
+
+
+@app.post("/api/auth/wechat/qr")
+def api_wechat_qr(request: Request):
+    """生成扫码登录票据 + 小程序码。二维码图上带 ticket（scene 参数），
+    浏览器轮询 /api/auth/wechat/qr/status 等待确认。"""
+    if not (WECHAT_APPID and WECHAT_SECRET) and not scan_login.MOCK_ENABLED:
+        raise HTTPException(503, "微信登录未配置")
+    _rate_limit(f"wxqr:ip:{_client_ip(request)}", 60)
+    ticket = scan_login.create_ticket()
+    if scan_login.MOCK_ENABLED:
+        # MOCK 模式：占位二维码（SVG data URL），confirm 接口接受任意 code
+        return {"ticket": ticket, "qr_image": scan_login.mock_qr_data_url(),
+                "expires_in": scan_login.TICKET_TTL}
+    try:
+        png = scan_login.get_wxa_code_unlimited(WECHAT_APPID, WECHAT_SECRET,
+                                                scene=ticket)
+    except Exception as e:
+        logger.warning("生成小程序码失败: %s", e)
+        raise HTTPException(502, "生成小程序码失败，请稍后重试")
+    return {"ticket": ticket,
+            "qr_image": "data:image/png;base64," + base64.b64encode(png).decode(),
+            "expires_in": scan_login.TICKET_TTL}
+
+
+@app.get("/api/auth/wechat/qr/status")
+def api_wechat_qr_status(request: Request, ticket: str = ""):
+    """浏览器轮询扫码状态。confirmed 时抢占式消费票据并签发 Bearer token。
+
+    不区分"票不存在"与"已过期"：否则这个接口就成了"某张票是否存在"的探针。
+    """
+    _rate_limit(f"wxstatus:ip:{_client_ip(request)}", 120)
+    ticket = ticket.strip()
+    if not scan_login.TICKET_RE.match(ticket):
+        raise HTTPException(400, "票据格式不正确")
+    rec = scan_login.get_ticket(ticket)
+    if rec is None or rec["expires_at"] <= time.time():
+        return {"status": "expired"}
+    if rec["status"] == "cancelled":
+        return {"status": "cancelled"}
+    if rec["status"] == "consumed":
+        # 已被另一次轮询领取：不暴露"已消费"这个内部状态，按过期处理
+        return {"status": "expired"}
+    if rec["status"] != "confirmed":
+        return {"status": "pending"}
+    username = scan_login.claim_confirmed_ticket(ticket)
+    if not username:
+        # 已被另一个轮询请求消费
+        return {"status": "expired"}
+    return {"status": "confirmed", "username": username,
+            "token": auth.make_token(username, SECRET)}
+
+
+@app.post("/api/auth/wechat/confirm")
+def api_wechat_confirm(request: Request, payload: dict = Body(...)):
+    """小程序端确认登录：{ticket, code} → code2session 换 openid → 置 confirmed。
+
+    不返回 token：真正要登录的是电脑浏览器，token 由 qr/status 轮询领取。
+    """
+    if not (WECHAT_APPID and WECHAT_SECRET) and not scan_login.MOCK_ENABLED:
+        raise HTTPException(503, "微信登录未配置")
+    _rate_limit(f"wxconfirm:ip:{_client_ip(request)}", 60)
+    ticket = str(payload.get("ticket") or "").strip()
+    code = str(payload.get("code") or "").strip()
+    if not scan_login.TICKET_RE.match(ticket):
+        raise HTTPException(400, "票据格式不正确")
+    if not code:
+        raise HTTPException(400, "缺少 code")
+    rec = scan_login.get_ticket(ticket)
+    if rec is None or rec["expires_at"] <= time.time():
+        raise HTTPException(404, "二维码已过期，请在电脑上刷新后重新扫码")
+    if rec["status"] == "cancelled":
+        raise HTTPException(409, "该二维码已被取消，请在电脑上重新生成")
+    # js_code 一次性有效，失败不能重试；重新扫码会拿到新 code，是唯一正确恢复路径
+    try:
+        openid = scan_login.code2session(WECHAT_APPID, WECHAT_SECRET, code)
+    except RuntimeError as e:
+        msg = str(e)
+        if "不可达" in msg or "返回异常" in msg:
+            raise HTTPException(502, msg)
+        raise HTTPException(401, msg)
+    username = auth.find_user_by_openid(openid) \
+        or auth.create_wechat_user(openid)
+    if not scan_login.confirm_ticket(ticket, openid, username):
+        raise HTTPException(409, "该二维码已使用，请在电脑上刷新后重新扫码")
+    return {"ok": True, "username": username}
+
+
+@app.post("/api/auth/wechat/cancel")
+def api_wechat_cancel(request: Request, payload: dict = Body(...)):
+    """小程序端"不是我操作的"：作废票据，电脑端随即收到 cancelled。"""
+    _rate_limit(f"wxcancel:ip:{_client_ip(request)}", 60)
+    ticket = str(payload.get("ticket") or "").strip()
+    if not scan_login.TICKET_RE.match(ticket):
+        raise HTTPException(400, "票据格式不正确")
+    # 取消失败（不存在/已确认/已过期）不影响安全：票据到期后自然作废
+    scan_login.cancel_ticket(ticket)
+    return {"ok": True}
 
 
 @app.get("/api/me")

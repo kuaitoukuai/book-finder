@@ -5,7 +5,8 @@
     "pages/search/search",
     "pages/me/me",
     "pages/login/login",
-    "pages/historyDetail/historyDetail"
+    "pages/historyDetail/historyDetail",
+    "pages/wechat-login/index"
   ],
   "window": {
     "navigationBarBackgroundColor": "#2f54eb",

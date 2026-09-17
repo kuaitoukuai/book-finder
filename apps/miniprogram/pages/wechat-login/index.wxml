@@ -1,0 +1,35 @@
+<view class="page">
+  <view class="brand">{{siteName}}</view>
+
+  <block wx:if="{{state === 'working'}}">
+    <view class="spinner"></view>
+    <view class="title">正在确认登录…</view>
+    <view class="hint">请稍候，通常 1 秒内完成</view>
+    <view class="cancel" bindtap="onCancel">不是我操作的？点此取消</view>
+  </block>
+
+  <block wx:elif="{{state === 'success'}}">
+    <view class="icon icon-ok">✓</view>
+    <view class="title">登录成功</view>
+    <view class="hint">已为「{{siteName}}」完成登录</view>
+    <view class="hint">现在可以回到电脑上继续了</view>
+    <button class="btn" bindtap="onDone">返回电脑继续</button>
+  </block>
+
+  <block wx:elif="{{state === 'cancelled'}}">
+    <view class="icon icon-warn">!</view>
+    <view class="title">已取消登录</view>
+    <view class="hint">本次登录已作废</view>
+    <view class="hint">电脑端需要重新生成二维码</view>
+    <button class="btn" bindtap="onBack">返回登录页</button>
+  </block>
+
+  <block wx:else>
+    <view class="icon icon-warn">!</view>
+    <view class="title">登录未完成</view>
+    <view class="hint">{{errorText}}</view>
+    <button class="btn" bindtap="onBack">返回登录页</button>
+  </block>
+
+  <view class="foot">本页仅用于确认网站登录，不会获取你的头像、昵称或手机号</view>
+</view>

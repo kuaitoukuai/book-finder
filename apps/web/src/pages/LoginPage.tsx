@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { WechatQrLogin } from "@/components/WechatQrLogin";
 import { useAuth } from "@/store/auth";
 
 export function LoginPage() {
@@ -90,6 +91,20 @@ export function LoginPage() {
               {busy ? "请稍候…" : mode === "login" ? "登录" : "注册并登录"}
             </Button>
           </form>
+
+          <div className="my-4 flex items-center gap-3 text-[12px] text-ink-soft">
+            <span className="h-px flex-1 bg-line" />
+            或
+            <span className="h-px flex-1 bg-line" />
+          </div>
+
+          {mode === "login" ? (
+            <WechatQrLogin />
+          ) : (
+            <p className="text-center text-[12px] text-ink-soft">
+              已有微信账号？切换到「登录」可扫码进入
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>
